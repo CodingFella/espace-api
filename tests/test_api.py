@@ -8,8 +8,8 @@ import vcr
 def status_code():
     return ['IsSuccessStatusCode']
 
-@vcr.use_cassette('tests/vcr_cassettes/api-athlete.yml', filter_query_parameters=['api_key'])
-def check_status(status_code):
+@vcr.use_cassette('tests/vcr_cassettes/events.yml', filter_query_parameters=['api_key'])
+def test_status(status_code):
     """Tests if API is working"""
     
     api_instance = API()
