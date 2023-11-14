@@ -134,6 +134,41 @@ h2 {
     overflow: hidden;
 }
 
+.api-button {
+    margin-top: 20px;
+    background-color: #4499c9;
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    height: 25px;
+}
+
+.api-button:hover {
+    background-color: #36789e;
+    cursor: pointer;
+}
+
+.api-button-cooldown {
+    background-color: darkgray;
+}
+
+.api-button-cooldown:hover {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.status-text {
+    width: auto;
+    height: 14px;
+    font-family: 'Arial';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+
+    color: #F2F2F2;
+}
+
 .text1 {
 
     width: auto;

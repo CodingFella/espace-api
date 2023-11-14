@@ -1,26 +1,20 @@
 
 const buttons = document.querySelectorAll('.button');
-const expandLabel = document.getElementById("room0");
+
 // Add a click event listener to each button
 buttons.forEach(button => {
     button.addEventListener('click', function(e) {
-        const text1 = this.querySelector('.text1').textContent;
-        const text2 = this.querySelector('.text2').textContent;
-        console.log(`Button Clicked: ${text1} - ${text2}`);
+        // const text1 = this.querySelector('.text1').textContent;
+        // const text2 = this.querySelector('.text2').textContent;
+        // console.log(`Button Clicked: ${text1} - ${text2}`);
         if(this.classList.contains("occupied-button"))
         {
-
-            console.log(this.className);
-            console.log(e.target.parentNode.classList);
             if (this.classList.contains("plain-button")) {
-                console.log("to expanded");
                 this.classList.remove("plain-button");
                 this.classList.add("expanded-button");
                 button.style.height = button.scrollHeight + "px";
-                console.log(button.scrollHeight + "px");
             }
             else if (this.classList.contains("expanded-button")) {
-                console.log("to plain");
                 button.style.height = "30px"
                 this.classList.remove("expanded-button");
                 this.classList.add("plain-button");
@@ -29,20 +23,31 @@ buttons.forEach(button => {
     });
 });
 
+const apibutton = document.querySelector('.api-button')
+
+apibutton.addEventListener('click', function(e) {
+    if(!this.classList.contains('api-button-cooldown')) {
+        // send update request
+        fetch('http://127.0.0.1:5001/api/refresh', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        // prevent user from spamming
+        this.classList.add("api-button-cooldown");
+        this.querySelector('.status-text').textContent = 'Updated! Available in ~1m';
+        setTimeout(() => {
+            this.classList.remove('api-button-cooldown');
+            this.querySelector('.status-text').textContent = 'API Update';
+        }, 60000);
+    }
+})
+
 const headers = {'Content-Type':'application/json',
                     'Access-Control-Allow-Origin':'*',
                     'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'}
-
-const userAction = async () => {
-    const response = await fetch('http://127.0.0.1:5001/api/invalid_rooms', { 
-        headers: headers,
-    });
-    const myJson = await response.json(); //extract JSON from the http response
-    console.log(myJson)
-}
-
-userAction()
-// for receiving input
 
 const dateInput = document.getElementById("dateInput");
 const startTimeInput = document.getElementById("startTime");
@@ -66,10 +71,9 @@ function sendDataToAPI() {
         endTime: endTime
     };
 
-    console.log(data);
     resetButtons();
 
-
+    // receive data from backend
     fetch('http://127.0.0.1:5001/api/get_events', {
         method: 'POST',
         headers: {
@@ -79,12 +83,8 @@ function sendDataToAPI() {
     })
     .then(response => response.json())
     .then(data => {
-        // Handle the response data (invalid_rooms) in your JavaScript code.
-        console.log(data);
-
         if (data) {
             resetButtons()
-            console.log('Hello World'); // Print "Hello World" when data is received from the backend.
         
 
             const occupied = [];
@@ -110,7 +110,6 @@ function sendDataToAPI() {
                     const text3Elt = element.querySelector('.text3')
                     if(text3Elt){
                         text3Elt.innerHTML += `${reason[index]['name']}<br>${reason[index]['start_time']}-${reason[index]['end_time']}<br>`;
-                        console.log(reason[index]['end_time']);
                     }
 
                     
@@ -118,7 +117,6 @@ function sendDataToAPI() {
                 index++;
             })
 
-            console.log(occupied);
         }
         
     })
@@ -128,7 +126,7 @@ function sendDataToAPI() {
     });
 };
 
-
+// return buttons to original state
 function resetButtons() {
     buttons.forEach(button => {
         button.className = "plain-button button";
