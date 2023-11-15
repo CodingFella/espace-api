@@ -3,6 +3,8 @@
 from espacewrapper import API
 from flask import Flask, request, jsonify
 import re
+from datetime import date
+from datetime import timedelta
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
@@ -12,9 +14,9 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route('/api/refresh', methods=['GET'])
 def setup():
     global events
+    yesterday = date.today() - timedelta(days=1)
     espaceapi = API()
-    events = espaceapi.get_next_days(10)
-    print("updated")
+    events = espaceapi.get_next_events(str(yesterday), 2000)
     return "Updated!"
 
 @app.route('/api/get_events', methods=['POST'])
@@ -135,4 +137,5 @@ def extract():
 setup()
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=5001)
